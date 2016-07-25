@@ -1,31 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorting
+﻿namespace Sorting
 {
+    using System;
+    using System.Text;
+
     public interface IFilterText
     {
-        char[] RemoveAllWhiteSpaceAndConvertToLowerCase(string text);
+        char[] RemoveAllWhiteSpace(string text);
+        char[] ConvertToLowerCase(string text);
     }
 
     public class FilterText : IFilterText
     {
-        public char[] RemoveAllWhiteSpaceAndConvertToLowerCase(string text)
+        public char[] ConvertToLowerCase(string text)
         {
-            StringBuilder filteredText = new StringBuilder();
+            ThrowArgumentNullExceptionIfTextIsNull(text);
+
+            return text.ToLowerInvariant().ToCharArray();
+        }
+
+        public char[] RemoveAllWhiteSpace(string text)
+        {
+            ThrowArgumentNullExceptionIfTextIsNull(text);
+
+            var filteredText = new StringBuilder();
 
             foreach (char c in text)
             {
-                if (char.IsLetter(c))
+                if (!char.IsWhiteSpace(c))
                 {
-                    filteredText.Append(char.ToLowerInvariant(c));
+                    filteredText.Append(c);
                 }
             }
 
             return filteredText.ToString().ToCharArray();
+        }
+
+        private static void ThrowArgumentNullExceptionIfTextIsNull(string text)
+        {
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
         }
     }
 }

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorting
+﻿namespace Sorting
 {
+    using System;
+
     public interface IHiddenMessage
     {
         string DecodeMessage(string text);
@@ -13,8 +9,8 @@ namespace Sorting
 
     public class HiddenMessage : IHiddenMessage
     {
-        private IFilterText filterText;
-        private ISort sort;
+        private readonly IFilterText filterText;
+        private readonly ISort sort;
 
         public HiddenMessage(IFilterText filterText, ISort sort)
         {
@@ -22,11 +18,17 @@ namespace Sorting
             this.sort = sort;
         }
 
-        public string DecodeMessage(string text)
+        public string DecodeMessage(string message)
         {
-            char[] filterTextApplied = this.filterText.RemoveAllWhiteSpaceAndConvertToLowerCase(text);
-            string sortedText = this.sort.SortCollection(filterTextApplied);
-            return sortedText;
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            var textWithoutWhiteSpace = this.filterText.RemoveAllWhiteSpace(message);
+            var textWithoutWhiteSpaceAndInLowerCase = this.filterText.ConvertToLowerCase(string.Concat(textWithoutWhiteSpace));
+            var sortedText = this.sort.SortChars(textWithoutWhiteSpaceAndInLowerCase);
+            return string.Concat(sortedText);
         }
     }
 }

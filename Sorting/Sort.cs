@@ -1,24 +1,23 @@
-﻿using System;
-using System.Text;
-
-namespace Sorting
+﻿namespace Sorting
 {
+    using System;
+
     public interface ISort
     {
-        int[] SortCollection(int[] numbers);
-        string SortCollection(char[] chars);
+        int[] SortNumbers(int[] numbers);
+        char[] SortChars(char[] chars);
     }
 
     public class Sort : ISort
     {
-        public int[] SortCollection(int[] numbers)
+        public int[] SortNumbers(int[] numbers)
         {
             return SortType(ref numbers);
         }
 
-        public string SortCollection(char[] chars)
+        public char[] SortChars(char[] chars)
         {
-            return string.Concat(SortType(ref chars));
+            return SortType(ref chars);
         }
 
         private T[] SortType<T>(ref T[] collection) where T : IComparable
@@ -28,7 +27,7 @@ namespace Sorting
                 throw new ArgumentNullException();
             }
 
-            bool sortAgain = false;
+            var sortAgain = false;
             T swapAux;
 
             for (int index = 0; index < collection.Length - 1; index++)
@@ -42,14 +41,7 @@ namespace Sorting
                 }
             }
 
-            if (sortAgain)
-            {
-                return SortType(ref collection);
-            }
-            else
-            {
-                return collection;
-            }
+            return sortAgain ? SortType(ref collection) : collection;
         }
     }
 }

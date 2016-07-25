@@ -1,49 +1,36 @@
-﻿using Sorting;
-using System;
-using Xunit;
-using Moq;
-
-namespace SortingUnitTestProject
+﻿namespace SortingUnitTestProject
 {
-    public class When_we_work_with_the_HiddenMessage_type : IDisposable
+    using FluentAssertions;
+    using Moq;
+    using Sorting;
+    using System;
+    using Xunit;
+
+    public class When_we_work_with_the_HiddenMessage_type
     {
-        private IHiddenMessage hiddenMessage;
-
-        public void Dispose()
+        public class And_we_want_to_DecodeMessage
         {
-            this.hiddenMessage = null;
-        }
-
-        public class And_we_want_to_decode_a_message : IDisposable
-        {
-            private When_we_work_with_the_HiddenMessage_type instance;
-            private Mock<IFilterText> filterTextMoq;
-            private Mock<ISort> sortMoq;
-
-            public void Dispose()
+            [Theory(DisplayName = "It should return the expected message")]
+            [InlineData("When not studying nuclear physics, Bambi likes to play beach volleyball.", "aaaaabbbbcccdeeeeeghhhiiiiklllllllmnnnnooopprsssstttuuvwyyyy")]
+            [InlineData("abcd", "Hello world!")]
+            public void It_should_return_the_expected_message(string messageToDecode, string expectedMessage)
             {
-                this.instance.Dispose();
-                this.instance = null;
-                this.sortMoq = null;
-                this.filterTextMoq = null;
+                var filterTextDummy = new Mock<IFilterText>();
+                var sortFilteredMessageStub = new Mock<ISort>();
+                sortFilteredMessageStub.Setup(foo => foo.SortChars(It.IsAny<char[]>())).Returns(expectedMessage.ToCharArray());
+                var sut = new HiddenMessage(filterTextDummy.Object, sortFilteredMessageStub.Object);
+                var actual = sut.DecodeMessage(messageToDecode);
+                actual.Should().Be(expectedMessage, "because it should return a message");
             }
 
-            [Theory(DisplayName = "It should decode a message correctly")]
-            [InlineData("When not studying nuclear physics, Bambi likes to play beach volleyball.", "whennotstudyingnuclearphysicsbambilikestoplaybeachvolleyball", "aaaaabbbbcccdeeeeeghhhiiiiklllllllmnnnnooopprsssstttuuvwyyyy")]
-            public void It_should_decode_a_message_correctly(string message, string filteredMessage, string expectedSortedMessage)
+            [Fact(DisplayName = "It should throw ArgumentNullException when message to decode is null")]
+            public void It_should_throw_ArgumentNullException_when_message_to_decode_is_null()
             {
-                this.instance = new When_we_work_with_the_HiddenMessage_type();
-                this.filterTextMoq = new Mock<IFilterText>();
-                var filteredMessageCharArray = filteredMessage.ToCharArray();
-                this.filterTextMoq.Setup(foo => foo.RemoveAllWhiteSpaceAndConvertToLowerCase(message)).Returns(filteredMessageCharArray);
-                this.sortMoq = new Mock<ISort>();
-                this.sortMoq.Setup(foo => foo.SortCollection(filteredMessageCharArray)).Returns(expectedSortedMessage);
-                this.instance.hiddenMessage = new HiddenMessage(this.filterTextMoq.Object, this.sortMoq.Object);
-                var expected = expectedSortedMessage;
-                var actual = this.instance.hiddenMessage.DecodeMessage(message);
-                Assert.Equal(expected, actual);
-                this.filterTextMoq.Verify(foo => foo.RemoveAllWhiteSpaceAndConvertToLowerCase(message), Times.Once);
-                this.sortMoq.Verify(foo => foo.SortCollection(filteredMessageCharArray), Times.Once);
+                var filterTextDummy = new Mock<IFilterText>();
+                var sortFilteredMessagesStub = new Mock<ISort>();
+                var sut = new HiddenMessage(filterTextDummy.Object, sortFilteredMessagesStub.Object);
+                Action actual = () => sut.DecodeMessage(null);
+                actual.ShouldThrow<ArgumentNullException>("because message to decode is null");
             }
         }
     }

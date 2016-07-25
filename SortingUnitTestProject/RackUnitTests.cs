@@ -1,64 +1,39 @@
-﻿using Moq;
-using Sorting;
-using System;
-using Xunit;
-
-namespace SortingUnitTestProject
+﻿namespace SortingUnitTestProject
 {
-    public class When_we_work_with_the_Rack_type : IDisposable
+    using FluentAssertions;
+    using Moq;
+    using Sorting;
+    using Xunit;
+
+    public class When_we_work_with_the_Rack_type
     {
-        private IRack rack;
-
-        public abstract class Base : IDisposable
+        public class And_we_wish_to_Add_a_new_ball
         {
-            protected When_we_work_with_the_Rack_type instance;
-
-            protected Base()
+            [Theory(DisplayName = "It should add the ball")]
+            [InlineData(20, new int[] { 20 })]
+            public void It_should_add_the_ball(int ballToAdd, int[] finalBallsCollection)
             {
-                this.instance = new When_we_work_with_the_Rack_type();
-                var moqSort = new Mock<ISort>();
-                this.instance.rack = new Rack(moqSort.Object);
-            }
-
-            public void Dispose()
-            {
-                this.instance.Dispose();
-                this.instance = null;
+                var sortDummy = new Mock<ISort>();
+                var sut = new Rack(sortDummy.Object);
+                sut.Add(ballToAdd);
+                sut.Balls.Should().Equal(finalBallsCollection, "because the new ball should be added and present in the collection");
             }
         }
 
-        public void Dispose()
+        public class And_we_wish_to_SortBalls
         {
-            this.rack = null;
-        }
-
-        public class And_we_wish_to_add_a_new_number : Base
-        {
-            public And_we_wish_to_add_a_new_number() : base()
+            [Theory(DisplayName = "It should return the balls collection")]
+            [InlineData(new int[0])]
+            [InlineData(new int[] { 20 })]
+            [InlineData(new int[] { 20, 100, int.MaxValue })]
+            [InlineData(new int[] { 20, 100, int.MaxValue, int.MinValue, 0 })]
+            public void It_should_return_the_balls_collection(int[] ballsCollectionToReturn)
             {
-                var moqSort = new Mock<ISort>();
-                moqSort.Setup(foo => foo.SortCollection(It.IsAny<int[]>())).Returns(() => this.SortedCollection);
-                base.instance.rack = new Rack(moqSort.Object);
-            }
-
-            private int[] SortedCollection
-            {
-                get; set;
-            }
-
-            [Fact(DisplayName = "It should add the number and sort all balls")]
-            public void It_should_add_the_ball_and_sort_all_balls()
-            {
-                Assert.Equal(new int[0], this.instance.rack.Balls);
-                this.SortedCollection = new int[] { 20 };
-                this.instance.rack.Add(20);
-                Assert.Equal(this.SortedCollection, this.instance.rack.Balls);
-                this.SortedCollection = new int[] { 10, 20 };
-                this.instance.rack.Add(10);
-                Assert.Equal(this.SortedCollection, this.instance.rack.Balls);
-                this.SortedCollection = new int[] { 10, 20, 30 };
-                this.instance.rack.Add(30);
-                Assert.Equal(this.SortedCollection, this.instance.rack.Balls);
+                var sortStub = new Mock<ISort>();
+                sortStub.Setup(foo => foo.SortNumbers(It.IsAny<int[]>())).Returns(ballsCollectionToReturn);
+                var sut = new Rack(sortStub.Object);
+                sut.SortBalls();
+                sut.Balls.Should().Equal(ballsCollectionToReturn, "because sort dependency should return the balls collection");
             }
         }
     }
