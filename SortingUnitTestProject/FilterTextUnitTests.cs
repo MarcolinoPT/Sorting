@@ -10,6 +10,7 @@
         public class And_we_want_to_RemoveAllWhiteSpace
         {
             [Theory(DisplayName = "It should return an array of characters with no white spaces")]
+            [Trait("Category", "Unit")]
             [InlineData("When not studying nuclear physics, Bambi likes to play beach volleyball.", "Whennotstudyingnuclearphysics,Bambilikestoplaybeachvolleyball.")]
             public void It_should_return_a_string_with_only_letters_in_lower_case_and_no_white_spaces(string textToRemoveWhiteSpaces, string expected)
             {
@@ -19,6 +20,7 @@
             }
 
             [Fact(DisplayName = "It should throw ArgumentNullException when text to convert is null")]
+            [Trait("Category", "Unit")]
             public void It_should_throw_ArgumentNullException_when_text_to_convert_is_null()
             {
                 var sut = new FilterText();
@@ -30,6 +32,7 @@
         public class And_we_want_to_ConvertToLowerCase
         {
             [Theory(DisplayName = "It should return an array of low case characters")]
+            [Trait("Category", "Unit")]
             [InlineData("When not studying nuclear physics, Bambi likes to play beach volleyball.", "when not studying nuclear physics, bambi likes to play beach volleyball.")]
             public void It_should_return_an_array_of_low_case_characters(string textToConvertToLowerCase, string expected)
             {
@@ -39,6 +42,7 @@
             }
 
             [Fact(DisplayName = "It should throw ArgumentNullException when text to convert is null")]
+            [Trait("Category", "Unit")]
             public void It_should_throw_ArgumentNullException_when_text_to_convert_is_null()
             {
                 var sut = new FilterText();

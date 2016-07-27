@@ -10,6 +10,7 @@
         public class And_we_wish_to_Add_a_new_ball
         {
             [Theory(DisplayName = "It should add the ball")]
+            [Trait("Category", "Unit")]
             [InlineData(20, new int[] { 20 })]
             public void It_should_add_the_ball(int ballToAdd, int[] finalBallsCollection)
             {
@@ -23,6 +24,7 @@
         public class And_we_wish_to_SortBalls
         {
             [Theory(DisplayName = "It should return the balls collection")]
+            [Trait("Category", "Unit")]
             [InlineData(new int[0])]
             [InlineData(new int[] { 20 })]
             [InlineData(new int[] { 20, 100, int.MaxValue })]

@@ -8,6 +8,7 @@
         public class And_we_Add_a_number
         {
             [Fact(DisplayName = "It should add the new number and sort all numbers stored")]
+            [Trait("Category", "Integration")]
             public void It_should_add_and_sort_all_numbers_stored()
             {
                 var sut = new Rack(new Sort());

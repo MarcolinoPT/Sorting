@@ -11,6 +11,7 @@
         public class And_we_want_to_DecodeMessage
         {
             [Theory(DisplayName = "It should return the expected message")]
+            [Trait("Category", "Unit")]
             [InlineData("When not studying nuclear physics, Bambi likes to play beach volleyball.", "aaaaabbbbcccdeeeeeghhhiiiiklllllllmnnnnooopprsssstttuuvwyyyy")]
             [InlineData("abcd", "Hello world!")]
             public void It_should_return_the_expected_message(string messageToDecode, string expectedMessage)
@@ -24,6 +25,7 @@
             }
 
             [Fact(DisplayName = "It should throw ArgumentNullException when message to decode is null")]
+            [Trait("Category", "Unit")]
             public void It_should_throw_ArgumentNullException_when_message_to_decode_is_null()
             {
                 var filterTextDummy = new Mock<IFilterText>();
